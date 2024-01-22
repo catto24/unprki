@@ -1,0 +1,43 @@
+#! /bin/bash
+
+while true; do
+    read -p "which process to kill: " PRCS
+
+    case $PRCS in
+        *) 
+		echo "-"
+		echo "'kill' will error if $PRCS is killed with sigterm, dw about it"
+		echo "-"
+
+		# make temporary directory for this script
+		echo "makin directory..."
+		mkdir /tmp/unprki
+
+		# attempt to sigterm $PRCS
+		echo ""
+		echo "attemptin to sigterm $PRCS..."
+		killall $PRCS
+
+		# give sigterm 10 seconds
+		echo ""
+		echo "slep for 10..."
+		sleep 10
+
+		# after 10 seconds, retrieve $PRCS PIDs and sigkill them
+		echo ""
+		echo "gettin da PIDs..."
+		pidof $PRCS >> /tmp/unprki/$PRCS_pidof_output
+
+		echo ""
+		echo "yeetin da PIDs..."
+		kill -9	"$(cat /tmp/unprki/$PRCS_pidof_output)"	
+
+		# remove temporary directory and its single file
+		echo ""		
+		echo "$PRCS should be ded now"
+		echo ""
+		echo "bye bye directory"
+		rm -rf /tmp/unprki
+	esac
+exit
+done
